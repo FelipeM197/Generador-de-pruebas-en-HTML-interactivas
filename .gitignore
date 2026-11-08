@@ -1,0 +1,31 @@
+# Entornos virtuales
+.venv/
+venv/
+env/
+ENV/
+.env
+
+# Artefactos de Python y cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Configuraciones de IDE y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Examenes y archivos HTML generados
+*.html
+examenes/
+pruebas_generadas/
+dist/
+build/
