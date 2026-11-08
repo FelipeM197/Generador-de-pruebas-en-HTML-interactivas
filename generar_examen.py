@@ -1,9 +1,8 @@
-"""Punto de entrada para la generación de exámenes interactivos en formato HTML."""
+"""Punto de entrada unificado para la generación de exámenes interactivos en formato HTML."""
 import os
 import sys
 
-from md_parser import parsear_md
-from txt_parser import parsear_txt
+from lector_preguntas import parsear_archivo
 from html_generator import generar_html
 
 
@@ -14,23 +13,14 @@ def generar_desde_archivo(ruta_entrada, ruta_salida=None):
     extension = os.path.splitext(ruta_entrada)[1].lower()
     nombre_base = os.path.splitext(os.path.basename(ruta_entrada))[0]
 
-    if extension in (".md", ".markdown"):
-        preguntas, avisos = parsear_md(ruta_entrada)
-        formato = "Markdown (opción múltiple / respuesta corta / relación)"
-    elif extension == ".txt":
-        preguntas, avisos = parsear_txt(ruta_entrada)
-        formato = "Texto plano (relación / emparejamiento)"
-    else:
-        raise ValueError(f"Extensión no admitida: {extension} (se requiere .md o .txt)")
+    preguntas, avisos = parsear_archivo(ruta_entrada)
 
     if not preguntas:
         raise ValueError(
             f"No fue posible extraer preguntas de '{ruta_entrada}'. "
-            f"Verifique la estructura del archivo para la extensión {extension}."
+            "Verifique que el contenido contenga bloques con formato [TIPO: ...] o estructuras de Columna A / Columna B."
         )
 
-    # Las referencias de imagen se resuelven de forma absoluta respecto al archivo origen
-    # para permitir que el generador HTML incruste los datos correctamente.
     carpeta_origen = os.path.dirname(os.path.abspath(ruta_entrada))
     for pregunta in preguntas:
         ruta_imagen = pregunta.get("imagen")
@@ -38,11 +28,10 @@ def generar_desde_archivo(ruta_entrada, ruta_salida=None):
             pregunta["imagen"] = os.path.join(carpeta_origen, ruta_imagen)
 
     ruta_salida = ruta_salida or os.path.join(os.path.dirname(ruta_entrada) or ".", f"{nombre_base}.html")
-
     titulo = f"Examen: {nombre_base}"
     identificador = generar_html(preguntas, ruta_salida, titulo=titulo, id_examen=nombre_base)
 
-    print(f"Formato procesado   : {formato}")
+    print(f"Archivo analizado   : {ruta_entrada} ({extension or 'sin extension'})")
     print(f"Preguntas obtenidas : {len(preguntas)}")
     conteo_tipos = {}
     for pregunta in preguntas:

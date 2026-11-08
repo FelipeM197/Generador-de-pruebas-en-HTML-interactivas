@@ -19,6 +19,7 @@ El objetivo es automatizar la creación de simuladores de evaluación a partir d
   - Relación y emparejamiento de columnas.
   - Ordenamiento lógico secuencial (numérico y romano).
   - Respuesta corta con normalización de caracteres y tildes.
+- **Compatibilidad universal (.md y .txt):** El analizador procesa cualquier tipo de reactivo sin importar si el archivo tiene extensión `.md`, `.txt` o si combina ambos formatos en un solo documento.
 - **Persistencia de sesión:** Registro de intentos previos y porcentaje de aciertos en `localStorage` del navegador.
 - **Modo de recuperación:** Opción para reiniciar el examen filtrando exclusivamente las preguntas falladas en intentos anteriores.
 
@@ -26,10 +27,10 @@ El objetivo es automatizar la creación de simuladores de evaluación a partir d
 
 ## Formatos de Entrada Admitidos
 
-El sistema admite dos tipos de archivo según la naturaleza de las preguntas:
+El sistema admite dos estructuras principales de forma indistinta tanto en archivos `.md` como en `.txt`, e incluso de forma combinada dentro del mismo documento:
 
-### 1. Archivos Markdown (`.md`, `.markdown`)
-Utilizados para preguntas de opción múltiple, verdadero/falso, ordenamiento y respuesta corta. Cada bloque sigue el siguiente esquema:
+### 1. Bloques Estructurados con Etiquetas (`[TIPO: ...]`)
+Utilizados para opción múltiple, verdadero/falso, ordenamiento y respuesta corta:
 
 ```markdown
 [TIPO: OPCION MULTIPLE]
@@ -43,8 +44,8 @@ Explicación: La atomicidad garantiza que una transacción sea tratada como una 
 
 *Nota:* El campo `Imagen:` es opcional y admite rutas relativas a la carpeta donde se encuentra el archivo fuente.
 
-### 2. Archivos de Texto Plano (`.txt`)
-Diseñados para bloques masivos de relación y emparejamiento entre dos columnas:
+### 2. Bloques de Columnas (Relación y Emparejamiento)
+Diseñados para ejercicios de correspondencia u ordenamiento secuencial entre dos columnas:
 
 ```text
 Fuente 1: Arquitectura de Sistemas Distribuidos
@@ -59,6 +60,7 @@ b. División por proyección de atributos y clave primaria.
 c. Combinación anidada de criterios por tupla y atributo.
 d. Distractor no aplicable.
 Respuestas: 1-a, 2-b, 3-c
+Explicación: La fragmentación divide tablas según relaciones horizontales o verticales.
 ```
 
 ---
@@ -94,13 +96,19 @@ Instrucciones de Salida:
 ```
 
 ### Paso 3: Guardar el Resultado
-Copia las preguntas generadas en un archivo de texto con codificación UTF-8, asignando la extensión `.md` para preguntas con opciones o `.txt` para ejercicios de relación de columnas.
+Guarda las preguntas generadas en un archivo de texto con codificación UTF-8, usando indistintamente la extensión `.md` o `.txt`.
 
 ### Paso 4: Generación del HTML Interactivo
-Ejecuta el script principal desde la terminal:
+Ejecuta el script principal desde la terminal indicando el archivo de entrada:
 
 ```bash
 python generar_examen.py archivo_entrada.md
+```
+
+O si el archivo está en formato de texto plano:
+
+```bash
+python generar_examen.py archivo_entrada.txt
 ```
 
 También es posible especificar una ruta o nombre de salida personalizado:
@@ -109,7 +117,7 @@ También es posible especificar una ruta o nombre de salida personalizado:
 python generar_examen.py archivo_entrada.txt evaluacion_final.html
 ```
 
-Si deseas prescindir de las preguntas de respuesta corta en un archivo Markdown antes de generar el examen, puedes utilizar la herramienta auxiliar de filtrado:
+Si deseas prescindir de las preguntas de respuesta corta antes de generar el examen interactivo, puedes utilizar la herramienta auxiliar de filtrado:
 
 ```bash
 python filtrar_respuesta_corta.py cuestionario.md cuestionario_sin_cortas.md
@@ -121,10 +129,11 @@ python filtrar_respuesta_corta.py cuestionario.md cuestionario_sin_cortas.md
 
 ```text
 ├── generar_examen.py              # Script principal de ejecucion
+├── lector_preguntas.py            # Motor unificado de analisis para formatos .md y .txt
 ├── html_generator.py              # Ensamblador de la interfaz web interactiva
-├── md_parser.py                   # Analizador para archivos en formato Markdown
-├── txt_parser.py                  # Analizador para archivos de texto de columnas
-├── filtrar_respuesta_corta.py     # Script auxiliar de filtrado
+├── md_parser.py                   # Adaptador de lectura para Markdown
+├── txt_parser.py                  # Adaptador de lectura para texto plano
+├── filtrar_respuesta_corta.py     # Script auxiliar de filtrado de respuesta corta
 ├── imagenes_examen/               # Recursos graficos incrustados en los reactivos
 ├── Preguntas_*.md                 # Baterias de ejemplo en formato Markdown
 ├── Preguntas_*.txt                # Baterias de ejemplo en formato de texto plano

@@ -1,4 +1,4 @@
-"""Filtro para excluir preguntas de respuesta corta en archivos Markdown."""
+"""Filtro para excluir preguntas de respuesta corta en archivos de preguntas (.md, .txt)."""
 import re
 import sys
 
@@ -29,7 +29,7 @@ def filtrar(ruta_entrada, ruta_salida=None):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Uso: python filtrar_respuesta_corta.py entrada.md [salida.md]")
+        print("Uso: python filtrar_respuesta_corta.py entrada.[md|txt] [salida.[md|txt]]")
         sys.exit(1)
     entrada = sys.argv[1]
     destino = sys.argv[2] if len(sys.argv) > 2 else None
