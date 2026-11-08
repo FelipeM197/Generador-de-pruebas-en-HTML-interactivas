@@ -197,6 +197,9 @@ class TestCompatibilidadFormatos(unittest.TestCase):
         self.assertIn("pregunta-card", html)
         self.assertIn("HTTPS", html)
         self.assertIn("Capa de Aplicación", html)
+        self.assertIn("modo-oscuro", html)
+        self.assertIn("alternarTema", html)
+        self.assertIn("btn-tema", html)
 
     def test_archivos_reales_del_repositorio(self):
         # Valida que todos los archivos reales existentes en el repositorio se procesen sin error
