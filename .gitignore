@@ -25,7 +25,26 @@ Thumbs.db
 
 # Examenes y archivos HTML generados
 *.html
+**/*.html
 examenes/
 pruebas_generadas/
 dist/
 build/
+
+# Archivos de texto plano
+*.txt
+**/*.txt
+
+# Bancos de preguntas (se ignora todo excepto el caso de prueba funcional de BDD)
+preguntas/*
+!preguntas/Preguntas_BDD.md
+
+# Archivos de preguntas en cualquier ubicacion
+Preguntas_*.md
+preguntas_*.md
+!Preguntas_BDD.md
+!preguntas/Preguntas_BDD.md
+
+# Recursos de imagen de examenes
+imagenes_examen/
+preguntas/imagenes_examen/

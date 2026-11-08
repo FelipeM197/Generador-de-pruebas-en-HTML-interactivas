@@ -102,25 +102,19 @@ Guarda las preguntas generadas en un archivo de texto con codificación UTF-8, u
 Ejecuta el script principal desde la terminal indicando el archivo de entrada:
 
 ```bash
-python generar_examen.py archivo_entrada.md
+python generar_examen.py preguntas/Preguntas_BDD.md
 ```
 
-O si el archivo está en formato de texto plano:
+O especificando una ruta o nombre de salida personalizado:
 
 ```bash
-python generar_examen.py archivo_entrada.txt
-```
-
-También es posible especificar una ruta o nombre de salida personalizado:
-
-```bash
-python generar_examen.py archivo_entrada.txt evaluacion_final.html
+python generar_examen.py preguntas/Preguntas_BDD.md examenes/mi_examen.html
 ```
 
 Si deseas prescindir de las preguntas de respuesta corta antes de generar el examen interactivo, puedes utilizar la herramienta auxiliar de filtrado:
 
 ```bash
-python filtrar_respuesta_corta.py cuestionario.md cuestionario_sin_cortas.md
+python src/filtrar_respuesta_corta.py preguntas/cuestionario.md preguntas/cuestionario_sin_cortas.md
 ```
 
 ---
@@ -128,16 +122,20 @@ python filtrar_respuesta_corta.py cuestionario.md cuestionario_sin_cortas.md
 ## Estructura del Repositorio
 
 ```text
-├── generar_examen.py              # Script principal de ejecucion
-├── lector_preguntas.py            # Motor unificado de analisis para formatos .md y .txt
-├── html_generator.py              # Ensamblador de la interfaz web interactiva
-├── md_parser.py                   # Adaptador de lectura para Markdown
-├── txt_parser.py                  # Adaptador de lectura para texto plano
-├── filtrar_respuesta_corta.py     # Script auxiliar de filtrado de respuesta corta
-├── imagenes_examen/               # Recursos graficos incrustados en los reactivos
-├── Preguntas_*.md                 # Baterias de ejemplo en formato Markdown
-├── Preguntas_*.txt                # Baterias de ejemplo en formato de texto plano
-└── .gitignore                     # Exclusion de temporales, entornos y HTML generados
+├── src/                           # Modulos y motor del sistema
+│   ├── generar_examen.py          # Logica central de generacion
+│   ├── lector_preguntas.py        # Motor unificado de analisis (.md y .txt)
+│   ├── html_generator.py          # Ensamblador de la interfaz web interactiva
+│   ├── md_parser.py               # Adaptador de compatibilidad para Markdown
+│   ├── txt_parser.py              # Adaptador de compatibilidad para texto plano
+│   └── filtrar_respuesta_corta.py # Utilidad de filtrado de reactivos
+├── tests/                         # Suite de pruebas automatizadas
+│   └── test_generador.py
+├── preguntas/                     # Directorio de cuestionarios e insumos
+│   └── Preguntas_BDD.md           # Examen de prueba funcional de referencia
+├── generar_examen.py              # Punto de entrada de consola en la raiz
+├── README.md                      # Documentacion general y guia de uso
+└── .gitignore                     # Exclusion de temporales, *.txt y preguntas locales
 ```
 
 ---

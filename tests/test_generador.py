@@ -1,7 +1,12 @@
 """Suite de pruebas automatizadas para verificar compatibilidad universal entre formatos .md y .txt."""
 import os
+import sys
 import tempfile
 import unittest
+
+DIR_SRC = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+if DIR_SRC not in sys.path:
+    sys.path.insert(0, DIR_SRC)
 
 from lector_preguntas import parsear_archivo
 from md_parser import parsear_md
@@ -206,10 +211,12 @@ class TestCompatibilidadFormatos(unittest.TestCase):
             ("preguntas_lecturas.md", 40),
         ]
 
+        dir_preguntas = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "preguntas"))
         for nombre, cantidad_esperada in archivos_existentes:
-            if not os.path.isfile(nombre):
+            ruta = os.path.join(dir_preguntas, nombre) if os.path.isfile(os.path.join(dir_preguntas, nombre)) else nombre
+            if not os.path.isfile(ruta):
                 continue
-            preguntas, _ = parsear_archivo(nombre)
+            preguntas, _ = parsear_archivo(ruta)
             self.assertEqual(
                 len(preguntas),
                 cantidad_esperada,
