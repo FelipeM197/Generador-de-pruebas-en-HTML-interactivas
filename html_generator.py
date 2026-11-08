@@ -29,6 +29,7 @@ _ETIQUETAS_TIPO = {
     "CORTA": "respuesta corta",
     "RELACION": "relación",
     "VERDADERO_FALSO": "verdadero/falso",
+    "DESARROLLO": "caso de desarrollo",
 }
 
 
@@ -243,6 +244,7 @@ function etiquetaTipo(q) {
   if (q.tipo === 'CORTA') return 'Respuesta corta';
   if (q.tipo === 'RELACION') return q.modo === 'numero' ? 'Ordenamiento' : 'Relación / Emparejamiento';
   if (q.tipo === 'VERDADERO_FALSO') return 'Verdadero o Falso';
+  if (q.tipo === 'DESARROLLO') return 'Caso de desarrollo';
   return q.tipo;
 }
 
@@ -280,6 +282,9 @@ function renderPregunta(q, idx) {
   } else if (q.tipo === 'CORTA') {
     bloque += `<input type="text" class="input-text" id="resp-${idx}" placeholder="Escribe tu respuesta" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();responderCorta(${idx});}">`;
     bloque += `<button class="btn btn-validar" onclick="responderCorta(${idx})">Validar respuesta</button>`;
+  } else if (q.tipo === 'DESARROLLO') {
+    bloque += `<textarea class="input-text" id="resp-${idx}" rows="5" placeholder="Escribe tu análisis técnico, diagnóstico y propuesta de solución..."></textarea>`;
+    bloque += `<button class="btn btn-validar" onclick="responderDesarrollo(${idx})">Ver solución y rúbrica oficial</button>`;
   } else if (q.tipo === 'RELACION') {
     const esOrden = q.modo === 'numero';
     const colB = esOrden ? q.columna_b.slice() : barajar(q.columna_b);
@@ -376,6 +381,22 @@ function responderCorta(idx) {
     return;
   }
   marcarResultado(idx, true);
+}
+
+function responderDesarrollo(idx) {
+  const q = preguntasActivas[idx];
+  if (q.respondida) return;
+  const areaTexto = document.getElementById(`resp-${idx}`);
+  if (!areaTexto.value.trim()) {
+    if (!confirm("No has ingresado una respuesta. Deseas consultar la solucion oficial directamente?")) return;
+  }
+  areaTexto.disabled = true;
+  document.querySelector(`#card-${idx} .btn-validar`).style.display = 'none';
+  const feedDiv = document.getElementById(`feed-${idx}`);
+  feedDiv.className = 'feedback correcto';
+  marcarResultado(idx, true);
+  const explicacionTexto = q.explicacion || q.feedback || q.respuesta_correcta || '';
+  feedDiv.innerHTML = `<strong>Rúbrica y Solución de Cátedra:</strong><p style="margin-top:8px; white-space:pre-wrap;">${escapeHtml(explicacionTexto)}</p>`;
 }
 
 function normalizarValor(valor, esOrden) {

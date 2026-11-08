@@ -4,7 +4,7 @@ import re
 
 PATRON_DIVISION_OPCIONES = re.compile(r'(?<![A-Za-z])([A-Z])[.)\-]\s+')
 PATRON_PAR_GENERICO = re.compile(r'^\d+\s*-\s*[^,]+(?:\s*,\s*\d+\s*-\s*[^,]+)*\.?$')
-PATRON_ORDEN_NUMEROS = re.compile(r'\d+(?:\s*,\s*\d+){1,}\.?\s*$')
+PATRON_ORDEN_NUMEROS = re.compile(r'\d+(?:\s*(?:->|,)\s*\d+){1,}\.?\s*$')
 PATRON_ORDEN_ROMANOS = re.compile(r'[IVXLCDM]+(?:\s*(?:->|,)\s*[IVXLCDM]+){1,}\.?\s*$')
 VALORES_ROMANOS = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
 
@@ -308,7 +308,11 @@ def parsear_bloques_tipo(texto):
         match_letra = re.match(r'^([A-Za-z])[.)\-]?$', respuesta_cruda)
         relacion = None
 
-        if match_letra and len(opciones) >= 2:
+        if 'DESARROLLO' in tipo_declarado.upper():
+            tipo_final = "DESARROLLO"
+            respuesta_correcta = respuesta_cruda or explicacion
+            opciones = []
+        elif match_letra and len(opciones) >= 2:
             opciones_vf = [o for o in opciones if _es_verdadero_falso(o)]
             if len(opciones_vf) >= 2:
                 tipo_final = "VERDADERO_FALSO"
