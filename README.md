@@ -21,6 +21,7 @@ El objetivo es automatizar la creación de simuladores de evaluación a partir d
   - Respuesta corta con normalización de caracteres y tildes.
 - **Compatibilidad universal (.md y .txt):** El analizador procesa cualquier tipo de reactivo sin importar si el archivo tiene extensión `.md`, `.txt` o si combina ambos formatos en un solo documento.
 - **Persistencia de sesión:** Registro de intentos previos y porcentaje de aciertos en `localStorage` del navegador.
+- **Modo oscuro integrado:** Selector en la barra superior para alternar entre tema claro y oscuro, con persistencia y detección automática de preferencia de sistema.
 - **Modo de recuperación:** Opción para reiniciar el examen filtrando exclusivamente las preguntas falladas en intentos anteriores.
 
 ---
@@ -137,6 +138,34 @@ python src/filtrar_respuesta_corta.py preguntas/cuestionario.md preguntas/cuesti
 ├── README.md                      # Documentacion general y guia de uso
 └── .gitignore                     # Exclusion de temporales, *.txt y preguntas locales
 ```
+
+---
+
+## Habilitación de Preguntas de Caso de Desarrollo
+
+Por diseño predeterminado, las preguntas de tipo desarrollo se omiten durante la compilación del examen, dado que exigen una revisión cualitativa abierta y no una calificación binaria automática inmediata.
+
+Para habilitar su inclusión en el examen interactivo con área de redacción y visualización de rúbrica de cátedra:
+
+1. Abre el archivo `src/lector_preguntas.py`.
+2. En la función `parsear_bloques_tipo`, localiza el bloque de control de desarrollo:
+
+```python
+        if 'DESARROLLO' in tipo_declarado.upper():
+            # Las preguntas de desarrollo se excluyen temporalmente al requerir calificacion cualitativa manual
+            continue
+```
+
+3. Sustituye la directiva `continue` por la activación del tipo correspondiente:
+
+```python
+        if 'DESARROLLO' in tipo_declarado.upper():
+            tipo_final = "DESARROLLO"
+            respuesta_correcta = respuesta_cruda or explicacion
+            opciones = []
+```
+
+Al regenerar el archivo HTML con `generar_examen.py`, el sistema generará una caja de texto para la redacción del estudiante y un botón interactivo para contrastar la respuesta con la solución oficial y criterios de evaluación.
 
 ---
 

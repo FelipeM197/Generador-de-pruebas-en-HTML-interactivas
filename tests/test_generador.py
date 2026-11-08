@@ -201,11 +201,27 @@ class TestCompatibilidadFormatos(unittest.TestCase):
         self.assertIn("alternarTema", html)
         self.assertIn("btn-tema", html)
 
+    def test_exclusion_preguntas_desarrollo(self):
+        bloque_desarrollo = """
+[TIPO: DESARROLLO]
+Pregunta ID: 99
+Enunciado: Explique el Teorema CAP y describa un escenario de particionamiento.
+Respuesta Correcta: Rúbrica oficial del teorema CAP.
+Explicación: Un sistema distribuido no puede garantizar consistencia estricta y disponibilidad ante particiones.
+"""
+        contenido = BLOQUE_MULTIPLE + "\n" + bloque_desarrollo + "\n" + BLOQUE_CORTA
+        ruta = self._crear_archivo_temporal(contenido, ".md")
+        preguntas, _ = parsear_archivo(ruta)
+        tipos = [p["tipo"] for p in preguntas]
+        self.assertNotIn("DESARROLLO", tipos)
+        self.assertEqual(len(preguntas), 2)
+
     def test_archivos_reales_del_repositorio(self):
         # Valida que todos los archivos reales existentes en el repositorio se procesen sin error
         archivos_existentes = [
             ("Preguntas_BDD.md", 244),
-            ("Preguntas_BigData.txt", 90),
+            ("Preguntas_BigData.txt", 36),
+            ("Preguntas_Infraestructura_BigData.md", 36),
             ("Preguntas_Compiladores.md", 85),
             ("Preguntas_Animaciones_Regresion_GIS.md", 69),
             ("Preguntas_DDBMS_Avanzado.md", 84),

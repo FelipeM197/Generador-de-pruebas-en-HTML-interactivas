@@ -309,9 +309,8 @@ def parsear_bloques_tipo(texto):
         relacion = None
 
         if 'DESARROLLO' in tipo_declarado.upper():
-            tipo_final = "DESARROLLO"
-            respuesta_correcta = respuesta_cruda or explicacion
-            opciones = []
+            # Las preguntas de desarrollo se excluyen temporalmente al requerir calificacion cualitativa manual
+            continue
         elif match_letra and len(opciones) >= 2:
             opciones_vf = [o for o in opciones if _es_verdadero_falso(o)]
             if len(opciones_vf) >= 2:
@@ -557,13 +556,20 @@ def parsear_archivo(ruta_entrada):
         firma = re.sub(r'\s+', ' ', p.get("enunciado", "")).strip().lower()[:100]
         if firma:
             firmas_registradas.add(firma)
+        posicion = texto.find(p.get("enunciado", "")[:40]) if p.get("enunciado") else len(texto)
+        p["_posicion"] = posicion if posicion != -1 else len(texto)
         preguntas.append(p)
 
     for p in preguntas_col:
         firma = re.sub(r'\s+', ' ', p.get("enunciado", "")).strip().lower()[:100]
         if firma and firma in firmas_registradas:
             continue
+        posicion = texto.find(p.get("enunciado", "")[:40]) if p.get("enunciado") else len(texto)
+        p["_posicion"] = posicion if posicion != -1 else len(texto)
         preguntas.append(p)
+
+    # Ordenamos cronologicamente segun su aparicion en el documento original
+    preguntas.sort(key=lambda item: item.pop("_posicion", 0))
 
     for indice, p in enumerate(preguntas, 1):
         p["id"] = f"pregunta-{indice}"
